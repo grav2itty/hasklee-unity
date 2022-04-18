@@ -1,0 +1,31 @@
+-- -*- Mode: Lua -*-
+
+-- require "object"
+
+Csound = Object:new()
+
+function Csound:new(o)
+  o = o or {}
+  o.event = Csound.event
+  setmetatable(o, self)
+  self.__index =
+    function(t, k)
+      if t.obj then return t.obj.gameObject.csound.getChannel(k) end
+    end
+  self.__newindex =
+    function(t, k, v)
+      if t.obj then t.obj.gameObject.csound.setChannel(k, v) end
+    end
+  return o
+end
+
+function Csound:event(s)
+  if self.obj then
+    self.obj.gameObject.csound.sendScoreEvent(s)
+  end
+end
+
+function addCsound(o)
+  if not o then return end
+  o.csound = Csound:new{ obj = o }
+end

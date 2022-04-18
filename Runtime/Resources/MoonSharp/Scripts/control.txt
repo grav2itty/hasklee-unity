@@ -1,0 +1,40 @@
+-- -*- mode: Lua -*-
+
+control = { lines = {} }
+
+function control:addActionR(sender, receiver, func)
+  if not (sender and receiver and func) then return end
+  if not self.lines[sender] then self.lines[sender] = {} end
+  if self.lines[sender][receiver] then
+    local prevFunc = self.lines[sender][receiver]
+    self.lines[sender][receiver] = function(...) prevFunc(...); func(...) end
+  else
+    self.lines[sender][receiver] = func
+  end
+end
+
+function control:action(sender, ...)
+  if self.lines[sender] then
+    local _G = _G
+    local newgt = {}
+    setmetatable(newgt, {__index = _G})
+    _G.sender = gameIDS[sender]
+    _ENV = newgt
+    for k, v in pairs(self.lines[sender]) do
+      if gameIDS[k] then
+        _G.gameObject = gameIDS[k].gameObject
+        _G.go = gameIDS[k].go
+        v(gameIDS[k], ...)
+      end
+    end
+    _ENV = _G
+  end
+end
+
+function control:clear()
+  self.lines = {}
+end
+
+function controlAction(...)
+  control:action(...)
+end

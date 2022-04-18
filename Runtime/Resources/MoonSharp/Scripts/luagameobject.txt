@@ -1,0 +1,80 @@
+-- -*- mode: Lua -*-
+
+-- require "object"
+-- require "control"
+-- require "csound"
+
+gameIDS = {}
+
+LuaGameObject = Object:new{}
+
+function clearLua()
+  control:clear()
+  gameIDS = {}
+end
+
+function newLuaGameObject(o, id)
+  local n = o or {}
+
+  if id then
+    n.ID = id
+    gameIDS[id] = n
+  end
+
+  n = Object.new(LuaGameObject, n)
+
+  return n
+end
+
+-- function newLuaObject(id)
+-- function newEmptyLuaGameObject(id)
+--   local n = {}
+--   if id then
+--     n.ID = id
+--     gameIDS[id] = n
+--   end
+
+--   n = Object.new(LuaGameObject, n)
+
+--   -- with this cant check for nil fields
+--   -- setmetatable(n, n)
+--   -- n.__index =
+--   --   function(t, k)
+--   --       return LuaGameObject[k] or t.gameObject[k]
+--   --   end
+
+--   return n
+-- end
+
+-- this is actually called only for objects created directly from lua?
+function LuaGameObject:new(o)
+  local n = Object.new(self, o)
+
+  Instantiate(self.gameObject.unityGameObject, n)
+
+  if n.color then n.gameObject.SetColor(n.color) end
+
+  if n.tag then
+    n.gameObject.tag = n.tag
+  end
+  if n.name then
+    n.gameObject.name = n.name
+  end
+
+  return n
+end
+
+function LuaGameObject:playTween(i)
+  self.gameObject.PlayTween(i)
+end
+
+
+function LuaGameObject:setParent(p, w)
+  self.parent = p
+  -- self.gameObject.transform.SetParent(p.gameObject.transform, w and true or false)
+  self.gameObject.SetParent(p.gameObject.transform, w and true or false)
+end
+
+function LuaGameObject:destroy()
+  self.gameObject.Destroy()
+end
