@@ -1,6 +1,6 @@
 # HaskleeUnity
 
-Unity package for loading [Hasklee](https://github.com/grav2ity/hasklee) scenes.
+Unity package for loading [Hasklee](https://github.com/grav2itty/hasklee) scenes.
 
 Please note that this is not an editor asset importer. Scenes can only be loaded in play mode and there is no built-in save feature.
 
@@ -23,7 +23,7 @@ This is a **Windows only** release. Due to Unity's lack of proper support for na
 3. [Install](https://docs.unity3d.com/Manual/upm-ui-giturl.html) packages from GitHub
 
     - [https://github.com/grav2ity/CsoundUnity.git](https://github.com/grav2ity/CsoundUnity.git)
-    - [https://github.com/grav2ity/HaskleeUnity.git](https://github.com/grav2ity/HaskleeUnity.git)
+    - [https://github.com/grav2ity/HaskleeUnity.git](https://github.com/grav2itty/HaskleeUnity.git)
 
 
 
