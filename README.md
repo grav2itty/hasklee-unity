@@ -33,6 +33,7 @@ This is a **Windows only** release. Due to Unity's lack of proper support for na
 
     - Create Empty GameObject
     - Add Component **Hasklee** and choose Default Material
+    - Add Component **Hasklee Live** to enable live programming
     - Add Component **Lua**
     - (optional) Some built-in widgets may not work correctly without this step. This will override default cursor.
         - Add Component **Curson N**
