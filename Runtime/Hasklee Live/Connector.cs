@@ -137,17 +137,29 @@ public class FrameReceiver
             long luaCommandSize = BitConverter.ToInt64(ssize, 0);
 
             byte[] binData = new byte[binDataSize];
+            string luaCommand = "";
+
             if (binDataSize > 0)
             {
-                bytesRec = socket.Receive(binData);
+                int totalBytesReceived = 0;
+                byte[] buffer = new byte[1024];
+                int bytesReceived;
+                do
+                {
+                    bytesReceived = socket.Receive(buffer);
+                    Buffer.BlockCopy(buffer, 0, binData, totalBytesReceived, bytesReceived);
+                    totalBytesReceived += bytesReceived;
+                }
+                while (bytesReceived > 0);
             }
-
-            byte[] luaCommandB = new byte[luaCommandSize];
-            string luaCommand = "";
-            if (luaCommandSize > 0)
+            else if (luaCommandSize > 0)
             {
-                bytesRec = socket.Receive(luaCommandB);
-                luaCommand = Encoding.UTF8.GetString(luaCommandB, 0, bytesRec);
+                byte[] luaCommandB = new byte[luaCommandSize];
+                if (luaCommandSize > 0)
+                {
+                    bytesRec = socket.Receive(luaCommandB);
+                    luaCommand = Encoding.UTF8.GetString(luaCommandB, 0, bytesRec);
+                }
             }
 
             Frame f = new Frame();
