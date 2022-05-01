@@ -672,9 +672,6 @@ class Init
                 rotf.maxr = reader.ReadSingle();
                 rotf.sendAction = reader.ReadBoolean();
                 break;
-            case ComponentT.ParentRotator:
-                go.AddComponent<ParentRotator>();
-                break;
             case ComponentT.Translator:
                 var traf = go.AddComponent<Translator>();
                 traf.axis = ReadInVector3(reader);

@@ -2,10 +2,11 @@ using UnityEngine;
 
 namespace Hasklee {
 
-//ADD SENSI
 public class Drag : MonoBehaviour
 {
     public float sensitivity;
+
+    private int targetID = 0;
 
 #if HASKLEE_CURSOR
     void OnMouseDragN()
@@ -13,9 +14,31 @@ public class Drag : MonoBehaviour
     void OnMouseDrag()
 #endif
     {
+        Lua.Action(targetID, "drag", Value());
+    }
+
+#if HASKLEE_CURSOR
+    void OnMouseDragEndN()
+    {
+        Lua.Action(targetID, "dragE", Value());
+    }
+
+    void OnMouseDragStartN()
+    {
+        Lua.Action(targetID, "dragS", Value());
+    }
+#endif
+
+    void Start()
+    {
+        targetID = gameObject.ID();
+    }
+
+    private Vector3 Value()
+    {
         float dx = CursorN.Instance.dx * sensitivity;
         float dy = CursorN.Instance.dy * sensitivity;
-        transform.Translate(new Vector3(dx, dy, 0));
+        return new Vector3(dx, dy, 0);
     }
 }
 
