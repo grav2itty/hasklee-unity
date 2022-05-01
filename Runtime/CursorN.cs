@@ -186,7 +186,6 @@ public class CursorN : MonoBehaviour
            if (currentObject)
            {
                currentObject.SendMessage("OnMouseDownN", SendMessageOptions.DontRequireReceiver);
-               draggedObject = currentObject;
            }
        }
        else if (buttonKeptDown)
@@ -194,6 +193,11 @@ public class CursorN : MonoBehaviour
            if (draggedObject)
            {
                draggedObject.SendMessage("OnMouseDragN", SendMessageOptions.DontRequireReceiver);
+           }
+           else if (currentObject)
+           {
+               currentObject.SendMessage("OnMouseDragStartN", SendMessageOptions.DontRequireReceiver);
+               draggedObject = currentObject;
            }
        }
 
