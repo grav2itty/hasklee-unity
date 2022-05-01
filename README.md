@@ -35,8 +35,8 @@ This is a **Windows only** release. Due to Unity's lack of proper support for na
     - Add Component **Hasklee** and choose Default Material
     - Add Component **Hasklee Live** to enable live programming
     - Add Component **Lua**
+    - Add Component **Curson N**
     - (optional) Some built-in widgets may not work correctly without this step. This will override default cursor.
-        - Add Component **Curson N**
         - Add **HASKLEE_CURSOR** under **Project Settings -> Player -> Scripting Define Symbols**
 
 2. Use **Hasklee.Hasklee.Instance** interface

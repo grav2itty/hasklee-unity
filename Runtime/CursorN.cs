@@ -83,8 +83,6 @@ public class CursorN : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        mat = (Material)Resources.Load("CursorMat", typeof(Material));
-        prop = new MaterialPropertyBlock();
         pos = new Vector3(0,0,0);
         lastPos = new Vector3(0,0,0);
 
@@ -94,13 +92,20 @@ public class CursorN : MonoBehaviour
             dyq.Enqueue(0);
         }
         dxs = 0f;
+
+#if HASKLEE_CURSOR
+        mat = (Material)Resources.Load("CursorMat", typeof(Material));
+        prop = new MaterialPropertyBlock();
+#endif
     }
 
     void Start()
     {
         camera = Camera.main;
+#if HASKLEE_CURSOR
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+#endif
     }
 
     public void Draw()
@@ -114,6 +119,7 @@ public class CursorN : MonoBehaviour
 
    public void Update()
    {
+#if HASKLEE_CURSOR
        if (directControl)
        {
            pos = new Vector3(Math.Min(Math.Max(pos.x + dx, -1), 1),
@@ -202,6 +208,8 @@ public class CursorN : MonoBehaviour
        }
 
        lastObject = currentObject;
+
+#endif
        lastPos = pos;
 
        dxq.Enqueue(dx);
@@ -214,7 +222,9 @@ public class CursorN : MonoBehaviour
 
    void LateUpdate()
    {
+#if HASKLEE_CURSOR
        Draw();
+#endif
    }
 
    public Vector3 WorldToViewportPoint(Vector3 v)
