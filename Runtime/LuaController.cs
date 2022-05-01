@@ -253,9 +253,14 @@ class LuaControllerProxy
         }
     }
 
-    public void SetParent(Transform parent, bool r)
+    public void SetParent(LuaController lc, bool r)
     {
-        luaController.transform.SetParent(parent, r);
+        luaController.transform.SetParent(lc.transform, r);
+    }
+
+    public void SetParent(LuaController lc)
+    {
+        SetParent(lc, true);
     }
 
     public void SetPosition(Vector3 v)

@@ -1,16 +1,15 @@
 -- -*- mode: Lua -*-
 
--- require "object"
--- require "control"
--- require "csound"
-
 gameIDS = {}
+luaObjects = gameIDS
+
 
 LuaGameObject = Object:new{}
 
 function clearLua()
   control:clear()
   gameIDS = {}
+  luaObjects = gameIDS
 end
 
 function newLuaGameObject(o, id)
@@ -66,13 +65,6 @@ end
 
 function LuaGameObject:playTween(i)
   self.gameObject.PlayTween(i)
-end
-
-
-function LuaGameObject:setParent(p, w)
-  self.parent = p
-  -- self.gameObject.transform.SetParent(p.gameObject.transform, w and true or false)
-  self.gameObject.SetParent(p.gameObject.transform, w and true or false)
 end
 
 function LuaGameObject:destroy()
