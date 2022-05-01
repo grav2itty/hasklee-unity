@@ -134,7 +134,7 @@ public class Lua : MonoBehaviour
         UserData.RegisterType<LuaExit>();
 
         UserData.RegisterType<GameObject>(InteropAccessMode.HideMembers);
-        UserData.RegisterType<Transform>(InteropAccessMode.HideMembers);
+        UserData.RegisterProxyType<TransformProxy, Transform>(r => new TransformProxy(r));
         UserData.RegisterProxyType<LightProxy, Light>(r => new LightProxy(r));
         UserData.RegisterProxyType<LuaControllerProxy, LuaController>(r => new LuaControllerProxy(r));
         UserData.RegisterProxyType<MonoBehaviourProxy, MonoBehaviour>(r => new MonoBehaviourProxy(r));
@@ -150,6 +150,13 @@ public class Lua : MonoBehaviour
                                                       DynValue.NewNumber(v.z)})));
 
         Script.GlobalOptions.CustomConverters.SetClrToScriptCustomConversion<Vector4>
+            (v => DynValue.NewTable(
+                new Table(Lua.script, new DynValue[] {DynValue.NewNumber(v.x),
+                                                      DynValue.NewNumber(v.y),
+                                                      DynValue.NewNumber(v.z),
+                                                      DynValue.NewNumber(v.w)})));
+
+        Script.GlobalOptions.CustomConverters.SetClrToScriptCustomConversion<Quaternion>
             (v => DynValue.NewTable(
                 new Table(Lua.script, new DynValue[] {DynValue.NewNumber(v.x),
                                                       DynValue.NewNumber(v.y),
