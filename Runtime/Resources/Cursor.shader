@@ -88,10 +88,10 @@ Shader "Custom/Cursor"
                 g2f o;
                 o.vertex = IN[0].vertex;
                 triStream.Append(o);
-                o.vertex = IN[0].vertex + float4(0.01,0,0,0);
+                o.vertex = IN[0].vertex + float4(0.02,0.02,0,0);
                 // o.vertex = IN[0].vertex + float4(0,0.1,0,0);
                 triStream.Append(o);
-                o.vertex = IN[0].vertex + float4(0,0.01,0,0);
+                o.vertex = IN[0].vertex + float4(0,0.02,0,0);
                 // o.vertex = IN[0].vertex + float4(0.1,0,0,0);
                 triStream.Append(o);
 

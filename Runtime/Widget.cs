@@ -25,6 +25,19 @@ public interface IConductor<T>
     Performs<T> performers { get; set; }
 }
 
+public class Conductor<T> : MonoBehaviour, IConductor<T>
+{
+    public Performs<T> performers { get; set; }
+
+    public void Conduct(T t)
+    {
+        if (performers != null)
+        {
+            performers(t);
+        }
+    }
+}
+
 
 public interface ShaderSignal<T>
 {

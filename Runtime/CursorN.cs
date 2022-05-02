@@ -10,21 +10,48 @@ namespace Hasklee {
 public class CursorN : MonoBehaviour
 {
     public float sensitivity = 0.01f;
-    public bool visible = true;
-    public bool directControl = true;
+    public bool alwaysVisible = true;
 
     public static CursorN Instance { get; private set; }
+
+    [NonSerialized]
+    public float dxs, dys;
+
+
+    private bool directControl = true;
+    private bool visible = true;
+
+    private Camera camera;
+
+    private Material mat;
+    private MaterialPropertyBlock prop;
+
+    private GameObject lastObject;
+    private GameObject draggedObject;
+
+    private GameObject followedObject;
+    private Vector3 followOffset;
+    private bool viewportFollow;
+
+    private Queue<float> dxq = new Queue<float>();
+    private Queue<float> dyq = new Queue<float>();
+    private int dqSize = 10;
+
+
 
     public float dx
     {
         get => Input.GetAxis("Mouse X") * sensitivity;
-        private set {}
     }
 
     public float dy
     {
         get => Input.GetAxis("Mouse Y") * sensitivity;
-        private set {}
+    }
+
+    public bool cursorMoved
+    {
+        get => !(pos == lastPos);
     }
 
     public Vector3 pos { get; set; }
@@ -39,44 +66,66 @@ public class CursorN : MonoBehaviour
     public Vector3 lastViewportPosition
     {
         get => new Vector3((lastPos.x+1f)*0.5f, (lastPos.y+1f)*0.5f, 0);
-        private set {}
     }
 
     private RaycastHit? cursorHit_;
     public RaycastHit? cursorHit
     {
         get => cursorHit_;
-        private set {}
     }
 
-    [NonSerialized]
-    public float dxs;
-    [NonSerialized]
-    public float dys;
 
-
-    private Camera camera;
-
-    private Material mat;
-    private MaterialPropertyBlock prop;
-
-    private GameObject lastObject;
-    private GameObject draggedObject;
-
-    private Queue<float> dxq = new Queue<float>();
-    private Queue<float> dyq = new Queue<float>();
-    private int dqSize = 10;
-
-
-    public bool cursorMoved()
+    public void FollowObject(GameObject go)
     {
-        if (pos == lastPos)
+#if HASKLEE_CURSOR
+        followedObject = go;
+        if (go != null)
         {
-            return false;
+            directControl = false;
+            visible = false;
+
+            RaycastHit hitInfo;
+            if (RayCast(out hitInfo) == true)
+            {
+                viewportFollow = false;
+                followOffset = hitInfo.transform.InverseTransformVector(hitInfo.point - hitInfo.transform.position);
+
+            }
+            else
+            {
+                viewportFollow = true;
+                followOffset = viewportPosition - CursorN.Instance.WorldToViewportPoint(go.transform.position);
+            }
         }
         else
         {
-            return true;
+            directControl = true;
+            visible = true;
+        }
+#endif
+    }
+
+    public bool RayCast(out RaycastHit hitInfo)
+    {
+        Ray ray = camera.ViewportPointToRay(viewportPosition);
+        return (Physics.Raycast(ray, out hitInfo));
+    }
+
+    public Vector3 WorldToViewportPoint(Vector3 v)
+    {
+        return camera.WorldToViewportPoint(v);
+    }
+
+
+    private void Draw()
+    {
+        if (alwaysVisible || visible)
+        {
+            //why is y negated?
+            prop.SetVector("position", new Vector4(pos.x, -pos.y, 0, 1));
+            Graphics.DrawProcedural
+                (mat, new Bounds(Vector3.zero, new Vector3(100000.0f, 100000.0f, 100000.0f)),
+                 MeshTopology.Points, 1, 1, null, prop, ShadowCastingMode.Off, false, 0);
         }
     }
 
@@ -85,6 +134,7 @@ public class CursorN : MonoBehaviour
         Instance = this;
         pos = new Vector3(0,0,0);
         lastPos = new Vector3(0,0,0);
+        followedObject = null;
 
         for (int i=0; i<dqSize; i++)
         {
@@ -108,22 +158,34 @@ public class CursorN : MonoBehaviour
 #endif
     }
 
-    public void Draw()
-    {
-        //why is y negated?
-        prop.SetVector("position", new Vector4(pos.x, -pos.y, 0, 1));
-        Graphics.DrawProcedural
-            (mat, new Bounds(Vector3.zero, new Vector3(100000.0f, 100000.0f, 100000.0f)),
-             MeshTopology.Points, 1, 1, null, prop, ShadowCastingMode.Off, false, 0);
-    }
 
-   public void Update()
+#if HASKLEE_CURSOR
+    void LateUpdate()
+    {
+        Draw();
+    }
+#endif
+
+   void Update()
    {
 #if HASKLEE_CURSOR
        if (directControl)
        {
            pos = new Vector3(Math.Min(Math.Max(pos.x + dx, -1), 1),
                              Math.Min(Math.Max(pos.y + dy, -1), 1), pos.z);
+       }
+       else if (followedObject != null)
+       {
+           if (viewportFollow == true)
+           {
+               viewportPosition = WorldToViewportPoint(followedObject.transform.position) + followOffset;
+           }
+           else
+           {
+               var offset = followedObject.transform.TransformVector(followOffset);
+               viewportPosition = WorldToViewportPoint(followedObject.transform.position + offset);
+           }
+
        }
 
        RaycastHit hitInfo;
@@ -220,17 +282,6 @@ public class CursorN : MonoBehaviour
        dys = dyq.Average();
    }
 
-   void LateUpdate()
-   {
-#if HASKLEE_CURSOR
-       Draw();
-#endif
-   }
-
-   public Vector3 WorldToViewportPoint(Vector3 v)
-   {
-       return camera.WorldToViewportPoint(v);
-   }
 }
 
 }

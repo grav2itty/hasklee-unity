@@ -4,13 +4,14 @@ using UnityEngine;
 
 namespace Hasklee {
 
-public class Stop : MonoBehaviour {}
-
 public class AntennaUnfold : MonoBehaviour
 {
     public float sensitivity;
 
     private float r = 0;
+    private int goID;
+    private AntennaUnfold first;
+    private AntennaUnfold last;
     private Tween tween;
 
 #if HASKLEE_CURSOR
@@ -19,57 +20,102 @@ public class AntennaUnfold : MonoBehaviour
     void OnMouseDrag()
 #endif
     {
-        float dd = CursorN.Instance.dx * sensitivity + CursorN.Instance.dy * sensitivity;
+        Lua.Action(goID, "aunfold ", Value());
+        DoDrag();
+    }
 
-        var rs = gameObject.GetComponentInParent<Stop>();
-        if (rs)
+#if HASKLEE_CURSOR
+    void OnMouseDragEndN()
+    {
+        CursorN.Instance.FollowObject(null);
+        Lua.Action(goID, "aunfoldE ", Value());
+        DoDrag();
+    }
+
+    void OnMouseDragStartN()
+    {
+        if (first != null && first.gameObject == gameObject && last != null)
         {
-            var hController = rs.gameObject.GetComponent<HController>();
-            if (hController != null)
-            {
-                Lua.Action(hController.ID, r);
-            }
-
-            var ss = rs.gameObject.GetComponent<AntennaUnfold>();
-            if (ss)
-            {
-                ss.Slide(dd);
-            }
+            CursorN.Instance.FollowObject(last.gameObject);
         }
         else
         {
-            Slide(dd);
+            CursorN.Instance.FollowObject(gameObject);
         }
+        Lua.Action(goID, "aunfoldS ", Value());
+        DoDrag();
     }
-
-    void Slide(float d)
-    {
-        r += d;
-        r = Math.Max(Math.Min(r, 1.0f), 0.0f);
-
-        if (gameObject.GetComponent<Stop>() == null)
-        {
-            tween.Goto(r, false);
-        }
-
-        foreach (Transform child in gameObject.transform)
-        {
-            var c = child.gameObject.GetComponent<AntennaUnfold>();
-            if (c != null)
-            {
-                c.Slide(d);
-            }
-        }
-    }
+#endif
 
     void Start()
     {
+        var stop = gameObject.GetComponentInParent<Stop>();
+        if (stop != null)
+        {
+            first = stop.gameObject.GetComponent<AntennaUnfold>();
+            goID = first.gameObject.ID();
+            last = Last();
+        }
+
         var animController = gameObject.GetComponent<AnimController>();
         if (animController != null)
         {
             tween = animController.TweenFromKey("slider");
         }
     }
+
+    private void DoDrag()
+    {
+        r = Value();
+        if (first != null)
+        {
+            first.Slide(r);
+        }
+        else
+        {
+            Slide(r);
+        }
+    }
+
+    private AntennaUnfold Last()
+    {
+        foreach (Transform child in gameObject.transform)
+        {
+            var au = child.gameObject.GetComponent<AntennaUnfold>();
+            if (au != null)
+            {
+                return au.Last();
+            }
+        }
+        return this;
+    }
+
+    private void Slide(float d)
+    {
+        r = d;
+
+        if (first.gameObject != gameObject)
+        {
+            tween.Goto(d, false);
+        }
+
+        foreach (Transform child in gameObject.transform)
+        {
+            var au = child.gameObject.GetComponent<AntennaUnfold>();
+            if (au != null)
+            {
+                au.Slide(d);
+            }
+        }
+    }
+
+    private float Value()
+    {
+        float dd = (CursorN.Instance.dx + CursorN.Instance.dy) * sensitivity;
+        return Math.Max(Math.Min(r + dd, 1.0f), 0.0f);
+    }
 }
+
+public class Stop : MonoBehaviour {}
 
 }

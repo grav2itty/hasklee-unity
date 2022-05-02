@@ -3,67 +3,12 @@ using UnityEngine;
 
 namespace Hasklee {
 
-public class Colada : MonoBehaviour
-{
-    private Key key;
-
-    void Start()
-    {
-        key = transform.parent.gameObject.GetComponent<Key>();
-    }
-
-#if HASKLEE_CURSOR
-    void OnMouseDownN() {
-#else
-    void OnMouseDown() {
-#endif
-        if (key != null)
-        {
-            key.OnMouseDownA();
-        }
-    }
-
-#if HASKLEE_CURSOR
-    void OnMouseEnterN() {
-#else
-    void OnMouseEnter() {
-#endif
-        if (key != null)
-        {
-            key.OnMouseEnterA();
-        }
-    }
-
-#if HASKLEE_CURSOR
-    void OnMouseExitN() {
-#else
-    void OnMouseExit() {
-#endif
-        if (key != null)
-        {
-            key.OnMouseExitA();
-        }
-    }
-
-#if HASKLEE_CURSOR
-    void OnMouseUpN() {
-#else
-    void OnMouseUp() {
-#endif
-        if (key != null)
-        {
-            key.OnMouseUpA();
-        }
-    }
-}
-
 public class Key : MonoBehaviour
 {
     private static Key pressedKey;
-    private static bool anyKeyPressed = false;
 
     private bool pressed = false;
-    private int targetID = 0;
+    private int goID = 0;
     private Tween tween;
 
 #if HASKLEE_CURSOR
@@ -86,7 +31,7 @@ public class Key : MonoBehaviour
     public void OnMouseEnterA()
     {
 #if HASKLEE_CURSOR
-        if (Input.GetMouseButton(0) && CursorN.Instance.cursorMoved())
+        if (Input.GetMouseButton(0) && CursorN.Instance.cursorMoved)
 #else
         if (Input.GetMouseButton(0))
 #endif
@@ -99,7 +44,7 @@ public class Key : MonoBehaviour
     public void OnMouseExitA()
     {
 #if HASKLEE_CURSOR
-        if (CursorN.Instance.cursorMoved())
+        if (CursorN.Instance.cursorMoved)
 #else
         if (true)
 #endif
@@ -113,16 +58,26 @@ public class Key : MonoBehaviour
         KeyRelease();
     }
 
-    void KeyPress()
+
+    void Start()
     {
-        if (anyKeyPressed && (pressedKey != this))
+        var animController = gameObject.GetComponent<AnimController>();
+        if (animController != null)
+        {
+            tween = animController.TweenFromKey("key");
+        }
+        goID = gameObject.ID();
+    }
+
+    private void KeyPress()
+    {
+        if ((pressedKey != null) && (pressedKey != this))
         {
             pressedKey.KeyRelease();
         }
 
-        Lua.Action(targetID, 1);
+        Lua.Action(goID, "key", 1);
 
-        anyKeyPressed = true;
         pressedKey = this;
         pressed = true;
 
@@ -135,16 +90,14 @@ public class Key : MonoBehaviour
         }
     }
 
-    void KeyRelease()
+    private void KeyRelease()
     {
-        if (anyKeyPressed == false)
-            return;
-        if (pressed == false)
-            return;
-        anyKeyPressed = false;
+        if (pressedKey == null) return;
+        if (pressed == false) return;
+        pressedKey = null;
         pressed = false;
 
-        Lua.Action(targetID, 0);
+        Lua.Action(goID, "key", 0);
 
         if (tween != null)
         {
@@ -152,14 +105,63 @@ public class Key : MonoBehaviour
         }
     }
 
+}
+
+public class Colada : MonoBehaviour
+{
+    private Key key;
+
+#if HASKLEE_CURSOR
+    void OnMouseDownN()
+#else
+    void OnMouseDown()
+#endif
+    {
+        if (key != null)
+        {
+            key.OnMouseDownA();
+        }
+    }
+
+#if HASKLEE_CURSOR
+    void OnMouseEnterN()
+#else
+    void OnMouseEnter()
+#endif
+    {
+        if (key != null)
+        {
+            key.OnMouseEnterA();
+        }
+    }
+
+#if HASKLEE_CURSOR
+    void OnMouseExitN()
+#else
+    void OnMouseExit()
+#endif
+    {
+        if (key != null)
+        {
+            key.OnMouseExitA();
+        }
+    }
+
+#if HASKLEE_CURSOR
+    void OnMouseUpN()
+#else
+    void OnMouseUp()
+#endif
+    {
+        if (key != null)
+        {
+            key.OnMouseUpA();
+        }
+    }
+
     void Start()
     {
-        var animController = gameObject.GetComponent<AnimController>();
-        if (animController != null)
-        {
-            tween = animController.TweenFromKey("key");
-        }
-        targetID = gameObject.ID();
+        key = transform.parent.gameObject.GetComponent<Key>();
     }
 }
 

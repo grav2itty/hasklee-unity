@@ -97,6 +97,9 @@ public class Lua : MonoBehaviour
             script.Globals["LuaExit"] = luaExit;
             script.Globals["Log"] = (Action<string>)Debug.Log;
             script.Globals["Time"] = (Func<float>)(() => Time.realtimeSinceStartup);
+
+            // no good
+            script.Globals["CameraT"] = Camera.main.transform;
         }
 
         if (prototype == null)
@@ -169,6 +172,11 @@ public class Lua : MonoBehaviour
                                                       DynValue.NewNumber(v.g),
                                                       DynValue.NewNumber(v.b),
                                                       DynValue.NewNumber(v.a)})));
+
+        Script.GlobalOptions.CustomConverters.SetClrToScriptCustomConversion<Tuple<int, float>>
+            (v => DynValue.NewTable(
+                new Table(Lua.script, new DynValue[] {DynValue.NewNumber(v.Item1),
+                                                      DynValue.NewNumber(v.Item2)})));
 
 
         Script.GlobalOptions.CustomConverters.SetScriptToClrCustomConversion

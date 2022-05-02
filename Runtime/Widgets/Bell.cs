@@ -8,7 +8,7 @@ public class Bell : MonoBehaviour
 {
     private Vector3 lastAngV;
     private Rigidbody rigidBody;
-    private int targetID = 0;
+    private int goID;
 
     void FixedUpdate()
     {
@@ -16,8 +16,7 @@ public class Bell : MonoBehaviour
         {
             if (Vector3.Dot(lastAngV, rigidBody.angularVelocity) < 0)
             {
-                Lua.Action(targetID, 0);
-                // Lua.Action(hController.ID, 0);
+                Lua.Action(goID, "bell");
             }
             lastAngV = rigidBody.angularVelocity;
         }
@@ -26,7 +25,7 @@ public class Bell : MonoBehaviour
     void Start()
     {
         lastAngV = new Vector3(0,0,0);
-        targetID = gameObject.ID();
+        goID = gameObject.ID();
         rigidBody = gameObject.GetComponent<Rigidbody>();
     }
 }

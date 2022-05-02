@@ -618,12 +618,6 @@ class Init
             case ComponentT.Drag:
                 go.AddComponent<Drag>().sensitivity = reader.ReadSingle();
                 break;
-            case ComponentT.DragSelf:
-                go.AddComponent<DragSelf>().sensitivity = reader.ReadSingle();
-                break;
-            case ComponentT.DragC:
-                go.AddComponent<DragC>().sensitivity = reader.ReadSingle();
-                break;
             case ComponentT.Bell:
                 go.AddComponent<Bell>();
                 break;

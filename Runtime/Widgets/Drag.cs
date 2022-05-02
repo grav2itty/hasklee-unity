@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Hasklee {
 
-public class Drag : MonoBehaviour
+public class Drag : Conductor<Vector3>
 {
     public float sensitivity;
 
-    private int targetID = 0;
+    private int goID = 0;
 
 #if HASKLEE_CURSOR
     void OnMouseDragN()
@@ -14,76 +14,30 @@ public class Drag : MonoBehaviour
     void OnMouseDrag()
 #endif
     {
-        Lua.Action(targetID, "drag", Value());
+        Lua.Action(goID, "drag", Value());
+        DoDrag();
     }
 
 #if HASKLEE_CURSOR
     void OnMouseDragEndN()
     {
-        Lua.Action(targetID, "dragE", Value());
+        CursorN.Instance.FollowObject(null);
+        Lua.Action(goID, "dragE", Value());
+        DoDrag();
     }
 
     void OnMouseDragStartN()
     {
-        Lua.Action(targetID, "dragS", Value());
+        CursorN.Instance.FollowObject(gameObject);
+        Lua.Action(goID, "dragS", Value());
+        DoDrag();
     }
 #endif
 
     void Start()
     {
-        targetID = gameObject.ID();
-    }
+        goID = gameObject.ID();
 
-    private Vector3 Value()
-    {
-        float dx = CursorN.Instance.dx * sensitivity;
-        float dy = CursorN.Instance.dy * sensitivity;
-        return new Vector3(dx, dy, 0);
-    }
-}
-
-public class DragC : MonoBehaviour, IConductor<Vector3>, IEnable
-{
-    public float sensitivity;
-
-    public Performs<Vector3> performers
-    {
-        get;
-        set;
-    }
-
-    public void Conduct(Vector3 v)
-    {
-        if (performers != null)
-        {
-            performers(v);
-        }
-    }
-
-    public void Enable()
-    {
-        enabled = true;
-    }
-
-#if HASKLEE_CURSOR
-    void OnMouseDragN()
-#else
-    void OnMouseDrag()
-#endif
-    {
-        if (enabled == true)
-        {
-            float dx = CursorN.Instance.dx * sensitivity;
-            float dy = CursorN.Instance.dy * sensitivity;
-            Conduct(new Vector3(dx, dy, 0));
-        }
-    }
-}
-
-public class DragSelf : DragC
-{
-    void Start()
-    {
         var performer1 = gameObject.GetComponent<IPerformer<Vector3>>();
         if (performer1 != null)
         {
@@ -97,6 +51,18 @@ public class DragSelf : DragC
                 performers += v => { performer2.Perform((v.x + v.y + v.z)); };
             }
         }
+    }
+
+    private void DoDrag()
+    {
+        Conduct(Value());
+    }
+
+    private Vector3 Value()
+    {
+        float dx = CursorN.Instance.dx * sensitivity;
+        float dy = CursorN.Instance.dy * sensitivity;
+        return new Vector3(dx, dy, 0);
     }
 }
 

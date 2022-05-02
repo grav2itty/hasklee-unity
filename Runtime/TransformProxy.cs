@@ -55,6 +55,16 @@ namespace Hasklee {
         }
 
 
+        public void Translate(Vector3 translation)
+        {
+            transform.Translate(translation);
+        }
+
+        public void Translate(Vector3 translation, Transform relativeTo)
+        {
+            transform.Translate(translation, relativeTo);
+        }
+
         public void RotateAround(Vector3 point, Vector3 axis, float angle)
         {
             transform.RotateAround(point, axis, angle);

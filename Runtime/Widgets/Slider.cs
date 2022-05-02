@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Hasklee {
 
-public class Slider : MonoBehaviour {
-
+public class Slider : MonoBehaviour
+{
     public float initp;
     public float sensitivity;
 
@@ -23,11 +23,11 @@ public class Slider : MonoBehaviour {
     private float pathLength;
     private float space;
 
-    private int targetID = 0;
+    private int goID = 0;
 
     void Start() {
 
-        targetID = gameObject.ID();
+        goID = gameObject.ID();
 
         before = new GameObject();
         before.name = "before";
@@ -67,7 +67,7 @@ public class Slider : MonoBehaviour {
 #if HASKLEE_CURSOR
     void OnMouseDownN()
     {
-        CursorN.Instance.directControl = false;
+        CursorN.Instance.FollowObject(gameObject);
 #else
     void OnMouseDown()
     {
@@ -78,7 +78,7 @@ public class Slider : MonoBehaviour {
 #if HASKLEE_CURSOR
     void OnMouseDragEndN()
     {
-        CursorN.Instance.directControl = true;
+        CursorN.Instance.FollowObject(null);
         // momentum = 0;
     }
 #endif
@@ -165,15 +165,11 @@ public class Slider : MonoBehaviour {
         r += d;
         r = Math.Max(Math.Min(r, 1.0f), 0.0f);
 
-        Lua.Action(targetID, r);
+        Lua.Action(goID, r);
 
         tween.Goto(r, false);
         tweenAfter.Goto(r + space, false);
         tweenBefore.Goto(r - space, false);
-
-#if HASKLEE_CURSOR
-        CursorN.Instance.viewportPosition = CursorN.Instance.WorldToViewportPoint(transform.position);
-#endif
     }
 }
 

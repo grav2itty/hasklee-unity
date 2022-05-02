@@ -56,7 +56,7 @@ public class Rotator : MonoBehaviour, IPerformer<float>, ICValue<float>
 
         if (sendAction == true)
         {
-            Lua.Action(targetID, r);
+            Lua.Action(targetID, "rot", r);
         }
 
         return dd;
@@ -137,7 +137,7 @@ public class Translator : MonoBehaviour, IPerformer<float>, ICValue<float>
 
         if (sendAction == true)
         {
-            Lua.Action(targetID, r);
+            Lua.Action(targetID, "tran", r);
         }
 
         return dd;
