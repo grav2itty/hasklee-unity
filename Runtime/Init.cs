@@ -201,12 +201,7 @@ class Init
         for (int i=0; i<objectCount; i++)
         {
             var obj = ReadObject(reader, true);
-            gameObjects.Add(obj);
-            if (haskleeGroup != null)
-            {
-                obj.transform.SetParent(haskleeGroup.transform);
-
-            }
+            AddRootGameObject(obj);
         }
 
         foreach (SetupA act in setupActions)
@@ -220,6 +215,14 @@ class Init
 #endif
     }
 
+    private static void AddRootGameObject(GameObject obj)
+    {
+        gameObjects.Add(obj);
+        if (haskleeGroup != null)
+        {
+            obj.transform.SetParent(haskleeGroup.transform);
+        }
+    }
 
     private static GameObject Instantiate(GameObject prefab)
     {
@@ -394,25 +397,27 @@ class Init
                     reader.Read(bb, 0, datal);
 
                     chil.SetActive(false);
+                    ReadInstanceAttributes(chil, new BinaryReader(new MemoryStream(bb)));
+
                     if (go.transform.parent != null)
                     {
-                        ReadInstanceAttributes(chil, new BinaryReader(new MemoryStream(bb)));
                         chil.transform.SetParent(go.transform.parent, false);
-                        chil.SetActive(true);
-
-                        foreach (Transform child in go.transform)
-                        {
-                            child.SetParent(chil.transform, false);
-                        }
-                        //destroy in not immediate
-                        UnityEngine.Object.Destroy(go);
-                        currentNode = chil.transform;
-
                     }
                     else
                     {
-                        Debug.LogWarning("Hasklee: Lost child.");
+                        //what are the other situations this could happen and be an actual error?
+                        // Debug.LogWarning("Hasklee: Lost child.");
+
+                        AddRootGameObject(chil);
                     }
+                    chil.SetActive(true);
+                    foreach (Transform child in go.transform)
+                    {
+                        child.SetParent(chil.transform, false);
+                    }
+                    //destroy in not immediate
+                    UnityEngine.Object.Destroy(go);
+                    currentNode = chil.transform;
                 }
                 else
                 {
