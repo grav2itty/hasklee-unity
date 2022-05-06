@@ -13,18 +13,20 @@ function control:addActionR(sender, receiver, func)
   end
 end
 
-function control:action(sender, ...)
+function control:action(sender, event, ...)
   if self.lines[sender] then
     local _G = _G
     local newgt = {}
     setmetatable(newgt, {__index = _G})
     _G.sender = gameIDS[sender]
+    _G.event = event
+    _G.args = {...}
     _ENV = newgt
     for k, v in pairs(self.lines[sender]) do
       if gameIDS[k] then
         _G.gameObject = gameIDS[k].gameObject
         _G.go = gameIDS[k].go
-        v(gameIDS[k], ...)
+        v(gameIDS[k], event, ...)
       end
     end
     _ENV = _G
