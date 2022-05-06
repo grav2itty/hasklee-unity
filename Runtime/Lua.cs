@@ -136,6 +136,8 @@ public class Lua : MonoBehaviour
         UserData.RegisterType<EventArgs>();
         UserData.RegisterType<LuaExit>();
 
+        UserData.RegisterProxyType<GraphPropagateProxy, GraphPropagate>(r => new GraphPropagateProxy(r));
+
         UserData.RegisterType<GameObject>(InteropAccessMode.HideMembers);
         UserData.RegisterProxyType<TransformProxy, Transform>(r => new TransformProxy(r));
         UserData.RegisterProxyType<LightProxy, Light>(r => new LightProxy(r));

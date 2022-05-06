@@ -107,6 +107,16 @@ class LuaControllerProxy
         set => luaController.hController.ID = value;
     }
 
+    public IntGraphV idGraph
+    {
+        get => luaController.gameObject.GetComponent<IdGraphR>().graph;
+    }
+
+    public GraphPropagate graphPropagate
+    {
+        get => luaController.gameObject.GetComponent<GraphPropagate>();
+    }
+
     public Light light
     {
         get => luaController.gameObject.GetComponent<Light>();

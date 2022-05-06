@@ -692,20 +692,16 @@ class Init
                     JsonUtility.FromJsonOverwrite(json, go.AddComponent(type));
                 }
                 break;
-#if HASKLEE_EXTRA_COMPONENTS
             case ComponentT.IdGraphRC:
                 ReadInIdGraph(go, reader, true);
                 break;
-            case ComponentT.GraphConductor:
-                var gcon = go.AddComponent<GraphConductor>();
-                gcon.n = reader.ReadInt32();
-                break;
             case ComponentT.GraphPropagate:
                 var first = reader.ReadInt32();
-                var flap = go.AddComponent<GraphPropagateC>();
-                flap.first = first;
-                flap.type = reader.ReadInt16();
+                var gtype = reader.ReadInt16();
+                var gsens = reader.ReadSingle();
+                GraphPropagate.Init(go, gtype, first, gsens);
                 break;
+#if HASKLEE_EXTRA_COMPONENTS
             case ComponentT.CameraNode:
                 // FIX THIS DANGLING GO
                 GameObject emptyGO = new GameObject();
@@ -1182,36 +1178,36 @@ class Init
         idGraph.graph = graph;
     }
 
-    private static IntGraph ReadIntGraph(BinaryReader reader, bool twoway)
-    {
-        IntGraph graph = new IntGraph();
+    // private static IntGraph ReadIntGraph(BinaryReader reader, bool twoway)
+    // {
+    //     IntGraph graph = new IntGraph();
 
-        int from, to;
-        int adjCount;
-        int nodeCount = reader.ReadInt32();
-        for (int i=0; i<nodeCount; i++)
-        {
-            from = reader.ReadInt32();
-            graph.SafeAddNode(from);
+    //     int from, to;
+    //     int adjCount;
+    //     int nodeCount = reader.ReadInt32();
+    //     for (int i=0; i<nodeCount; i++)
+    //     {
+    //         from = reader.ReadInt32();
+    //         graph.SafeAddNode(from);
 
-            adjCount = reader.ReadInt32();
-            for (int j=0; j<adjCount; j++)
-            {
-                to = reader.ReadInt32();
-                if (twoway)
-                {
-                    graph.AddEdge(from, to);
-                    graph.SafeAddEdge(to, from);
-                }
-                else
-                {
-                    graph.AddEdge(from, to);
-                }
-            }
-        }
+    //         adjCount = reader.ReadInt32();
+    //         for (int j=0; j<adjCount; j++)
+    //         {
+    //             to = reader.ReadInt32();
+    //             if (twoway)
+    //             {
+    //                 graph.AddEdge(from, to);
+    //                 graph.SafeAddEdge(to, from);
+    //             }
+    //             else
+    //             {
+    //                 graph.AddEdge(from, to);
+    //             }
+    //         }
+    //     }
 
-        return graph;
-    }
+    //     return graph;
+    // }
 
     private static IntGraphV ReadIntGraphVN(BinaryReader reader)
     {
