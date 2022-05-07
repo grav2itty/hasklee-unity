@@ -13,6 +13,12 @@ namespace Hasklee {
             this.transform = transform;
         }
 
+        public Vector3 eulerAngles
+        {
+            get => transform.eulerAngles;
+            set => transform.eulerAngles = value;
+        }
+
         public Vector3 forward
         {
             get => transform.forward;
@@ -55,14 +61,14 @@ namespace Hasklee {
         }
 
 
-        public void Translate(Vector3 translation)
+        public void Rotate(Vector3 eulers)
         {
-            transform.Translate(translation);
+            transform.Rotate(eulers);
         }
 
-        public void Translate(Vector3 translation, Transform relativeTo)
+        public void Rotate(Vector3 axis, float angle)
         {
-            transform.Translate(translation, relativeTo);
+            transform.Rotate(axis, angle);
         }
 
         public void RotateAround(Vector3 point, Vector3 axis, float angle)
@@ -78,6 +84,16 @@ namespace Hasklee {
         public void SetParent(Transform t)
         {
             transform.SetParent(t, true);
+        }
+
+        public void Translate(Vector3 translation)
+        {
+            transform.Translate(translation);
+        }
+
+        public void Translate(Vector3 translation, Transform relativeTo)
+        {
+            transform.Translate(translation, relativeTo);
         }
 
     }

@@ -72,25 +72,4 @@ public abstract class GraphPropagate : MonoBehaviour, IGraphPropagate<Vector3>
     public abstract void PropagateFrom(Vector3 arg, int start);
 }
 
-public class GraphPropagateProxy
-{
-    GraphPropagate graphPropagate;
-
-    [MoonSharpHidden]
-    public GraphPropagateProxy(GraphPropagate graphPropagate)
-    {
-        this.graphPropagate = graphPropagate;
-    }
-
-    public void Propagate(Vector3 v)
-    {
-        graphPropagate.Propagate(v);
-    }
-
-    public void PropagateFrom(Vector3 v, int start)
-    {
-        graphPropagate.PropagateFrom(v, start);
-    }
-}
-
 }
