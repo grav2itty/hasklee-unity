@@ -638,6 +638,15 @@ class Init
             case ComponentT.Click:
                 go.AddComponent<Click>();
                 break;
+            case ComponentT.Trigger:
+                go.AddComponent<Trigger>();
+                var collider = go.GetComponent<MeshCollider>();
+                if (collider != null)
+                {
+                    collider.convex = true;
+                    collider.isTrigger = true;
+                }
+                break;
             case ComponentT.AntennaUnfold:
                 go.AddComponent<AntennaUnfold>().sensitivity = reader.ReadSingle();
                 break;
@@ -845,6 +854,10 @@ class Init
                 case AttributeT.IgnoreRayCastAtr:
                     go.layer = 2;
                     break;
+                case AttributeT.InvisibleAtr:
+                    if (go.GetComponent<MeshRenderer>() != null)
+                        go.GetComponent<MeshRenderer>().enabled = false;
+                    break;
                 case AttributeT.ColliderAtr:
                 {
                         bool readUVs2 = readUVs;
@@ -891,6 +904,10 @@ class Init
                     //would have to do some kind of csound table (de)serialize
                     //in order to get rid of the active requirement
                     Lua.AddCsound(LuaController.AddGetLuaController(go).lt);
+
+                    AudioSource audio = go.GetComponent<AudioSource>();
+                    audio.spatialBlend = 1f;
+                    audio.rolloffMode = AudioRolloffMode.Linear;
                     }
                     break;
                 }

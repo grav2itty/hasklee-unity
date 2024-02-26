@@ -9,7 +9,7 @@ public class AntennaUnfold : MonoBehaviour
     public float sensitivity;
 
     private float r = 0;
-    private int goID;
+    public int goID;
     private AntennaUnfold first;
     private AntennaUnfold last;
     private Tween tween;
@@ -20,7 +20,7 @@ public class AntennaUnfold : MonoBehaviour
     void OnMouseDrag()
 #endif
     {
-        Lua.Action(goID, "aunfold ", Value());
+        Lua.Action(goID, "aunfold", Value());
         DoDrag();
     }
 
@@ -28,13 +28,13 @@ public class AntennaUnfold : MonoBehaviour
     void OnMouseDragEndN()
     {
         CursorN.Instance.FollowObject(null);
-        Lua.Action(goID, "aunfoldE ", Value());
+        Lua.Action(goID, "aunfoldE", Value());
         DoDrag();
     }
 
     void OnMouseDragStartN()
     {
-        if (first != null && first.gameObject == gameObject && last != null)
+        if (r < 0.1 && first != null && first.gameObject == gameObject && last != null)
         {
             CursorN.Instance.FollowObject(last.gameObject);
         }
@@ -42,7 +42,7 @@ public class AntennaUnfold : MonoBehaviour
         {
             CursorN.Instance.FollowObject(gameObject);
         }
-        Lua.Action(goID, "aunfoldS ", Value());
+        Lua.Action(goID, "aunfoldS", Value());
         DoDrag();
     }
 #endif
@@ -115,7 +115,5 @@ public class AntennaUnfold : MonoBehaviour
         return Math.Max(Math.Min(r + dd, 1.0f), 0.0f);
     }
 }
-
-public class Stop : MonoBehaviour {}
 
 }

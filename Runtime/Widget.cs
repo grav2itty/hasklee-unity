@@ -60,4 +60,6 @@ public class IdT : MonoBehaviour
     public int[] ids;
 }
 
+public class Stop : MonoBehaviour {}
+
 }

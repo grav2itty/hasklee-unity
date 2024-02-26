@@ -12,7 +12,7 @@ public class Click : MonoBehaviour
     void OnMouseUpAsButton()
 #endif
     {
-        Lua.Action(goID);
+        Lua.Action(goID, "click");
     }
 
     void Start()

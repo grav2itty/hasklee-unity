@@ -165,7 +165,7 @@ public class Slider : MonoBehaviour
         r += d;
         r = Math.Max(Math.Min(r, 1.0f), 0.0f);
 
-        Lua.Action(goID, r);
+        Lua.Action(goID, "slide", r);
 
         tween.Goto(r, false);
         tweenAfter.Goto(r + space, false);

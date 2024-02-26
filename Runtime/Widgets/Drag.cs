@@ -2,11 +2,35 @@ using UnityEngine;
 
 namespace Hasklee {
 
+// public class Drag : MonoBehaviour
+// {
+//     private Transform transform;
+
+//     public static void AddFromLua(GameObject go, Table lt)
+//     {
+//         go.AddComponent<Drag>();
+//     }
+
+//     void Awake()
+//     {
+//         transform = gameObject.GetComponent<Transform>();
+//     }
+
+//     void OnMouseDragN()
+//     {
+//         float yy = Input.GetAxis("Mouse Y")/10;
+//         float xx = Input.GetAxis("Mouse X")/10;
+//         transform.Translate(new Vector3(xx, yy, 0));
+//     }
+// }
+
 public class Drag : Conductor<Vector3>
 {
     public float sensitivity;
 
     private int goID = 0;
+
+    private Transform transform;
 
 #if HASKLEE_CURSOR
     void OnMouseDragN()
@@ -16,6 +40,9 @@ public class Drag : Conductor<Vector3>
     {
         Lua.Action(goID, "drag", Value());
         DoDrag();
+        float yy = Input.GetAxis("Mouse Y")/10;
+        float xx = Input.GetAxis("Mouse X")/10;
+        transform.Translate(new Vector3(xx, yy, 0));
     }
 
 #if HASKLEE_CURSOR
@@ -37,6 +64,8 @@ public class Drag : Conductor<Vector3>
     void Start()
     {
         goID = gameObject.ID();
+        
+        transform = gameObject.GetComponent<Transform>();
 
         var performer1 = gameObject.GetComponent<IPerformer<Vector3>>();
         if (performer1 != null)

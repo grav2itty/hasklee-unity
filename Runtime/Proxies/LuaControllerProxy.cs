@@ -109,6 +109,16 @@ class LuaControllerProxy
         return luaController.hController.GetColorB();
     }
 
+    public Vector3 GetPosition()
+    {
+        return luaController.transform.position;
+    }
+
+    public Vector3 GetRotation()
+    {
+        return luaController.transform.eulerAngles;
+    }
+
     public int idTable(int i)
     {
         return luaController.gameObject.GetComponent<IdT>().ids[i - 1];
@@ -187,6 +197,15 @@ class LuaControllerProxy
         SetParent(lc, true);
     }
 
+    public void SetPosition(Vector3 v)
+    {
+        luaController.transform.position = v;
+    }
+
+    public void SetRotation(Vector3 v)
+    {
+        luaController.transform.eulerAngles = v;
+    }
 }
 
 }
